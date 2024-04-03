@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
-import tw from "tailwind-react-native-classnames";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  Alert,
+} from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { forgotPassword } from "../../services/requests/requestsUser";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,19 +32,18 @@ const ModalRecoveryPassword = ({ showRecoveryModal, setShowRecoveryModal }) => {
   const handleForgotPassword = async () => {
     try {
       await forgotPassword({ email: forgotEmail });
-      setShowRecoveryModal(false)
       setForgotEmail("");
+      setShowRecoveryModal(false);
       Alert.alert(
         "Sucesso",
         "Email de recuperação enviado com sucesso!",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         { cancelable: false }
       );
     } catch (error) {
-      Alert.alert(
-        "Erro",
-        "Ocorreu um erro ao enviar o email de recuperação!",
-        { cancelable: false }
-      );
+      Alert.alert("Erro", "Ocorreu um erro ao enviar o email de recuperação!", {
+        cancelable: false,
+      });
     }
   };
 
@@ -51,16 +56,28 @@ const ModalRecoveryPassword = ({ showRecoveryModal, setShowRecoveryModal }) => {
         setShowRecoveryModal(false);
       }}
     >
-      <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-30`}>
-        <View style={tw`bg-white rounded-lg p-6 w-80`}>
-          <Text style={tw`text-lg font-bold mb-2 text-center`}>Esqueceu a senha?</Text>
-          <Text style={tw`text-sm font-normal mb-4 text-gray-600 text-center`}>Digite seu email para recuperar sua senha.</Text>
+      <View
+        className="flex-1 justify-center items-center"
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View className="bg-white rounded-lg p-6 w-80 dark:bg-gray-600">
+          <Text className="text-lg font-bold mb-2 text-center dark:text-white">
+            Esqueceu a senha?
+          </Text>
+          <Text className="text-sm font-normal mb-4 text-gray-600 text-center dark:text-white">
+            Digite seu email para recuperar sua senha.
+          </Text>
           <Controller
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
                 placeholder="Digite seu email"
                 onChangeText={(text) => {
                   setForgotEmail(text);
@@ -68,20 +85,21 @@ const ModalRecoveryPassword = ({ showRecoveryModal, setShowRecoveryModal }) => {
                 }}
                 onBlur={onBlur}
                 value={value}
+                placeholderTextColor={"gray"}
               />
             )}
           />
           {errors.email && (
-            <Text style={tw`text-red-500`}>{errors.email?.message}</Text>
+            <Text className="text-red-500">{errors.email?.message}</Text>
           )}
           <TouchableOpacity
-            style={tw`bg-blue-500 rounded-md p-2 mb-4`}
+            className="bg-blue-500 rounded-md p-2 mb-4"
             onPress={handleSubmit(handleForgotPassword)}
           >
-            <Text style={tw`text-white text-center`}>Enviar</Text>
+            <Text className="text-white text-center">Enviar</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setModalVisible(false)}>
-            <Text style={tw`text-sm text-blue-600 text-center`}>Cancelar</Text>
+          <TouchableOpacity onPress={() => setShowRecoveryModal(false)}>
+            <Text className="text-sm text-blue-600 text-center">Cancelar</Text>
           </TouchableOpacity>
         </View>
       </View>
