@@ -16,7 +16,10 @@ const handleRequest = async (method, url, token, data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
-      console.error(`Erro na requisição ${method} para ${url}:`, error.response.data);
+      console.error(
+        `Erro na requisição ${method} para ${url}:`,
+        error.response.data
+      );
     } else {
       console.error(`Erro na requisição ${method} para ${url}:`, error);
     }

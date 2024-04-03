@@ -13,7 +13,10 @@ const handleRequest = async (method, url, token) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
-      console.error(`Erro na requisição ${method} para ${url}:`, error.response.data);
+      console.error(
+        `Erro na requisição ${method} para ${url}:`,
+        error.response.data
+      );
     } else {
       console.error(`Erro na requisição ${method} para ${url}:`, error);
     }
@@ -21,8 +24,8 @@ const handleRequest = async (method, url, token) => {
   }
 };
 
-export const listRatings = async (token) => {
-  return handleRequest("get", "/ratings/", token);
+export const listRatings = async (token, data) => {
+  return handleRequest("post", "/ratings/", token, data);
 };
 
 export const getRatingDetail = async (token, ratingId) => {
