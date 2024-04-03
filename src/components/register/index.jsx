@@ -1,12 +1,16 @@
-import React from "react";
-import { View, Text, TextInput, ToastAndroid, TouchableOpacity } from "react-native";
-import tw from "tailwind-react-native-classnames";
-import { useForm, Controller } from "react-hook-form";
-import { createUser } from "../../services/requests/requestsUser";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Text,
+  TextInput,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as yup from "yup";
-import { useNavigation } from '@react-navigation/native';
-import { Link } from "react-router-native";
+import { createUser } from "../../services/requests/requestsUser";
 
 const registerSchema = yup.object({
   name: yup.string().required("O nome é obrigatório."),
@@ -28,35 +32,39 @@ const RegisterForm = () => {
   } = useForm({
     resolver: yupResolver(registerSchema),
   });
+  const navigation = useNavigation();
 
   const onSubmit = async (data) => {
     try {
       await createUser(data);
       ToastAndroid.show("criado usuário!", ToastAndroid.SHORT);
-      useNavigation.navigate('Login');
+      navigation.navigate("Login");
     } catch (error) {
-      Alert.alert('Erro', 'Usuário já existe!', [{ text: 'OK', onPress: () => console.log('OK Pressed') }], { cancelable: false });
+      Alert.alert(
+        "Erro",
+        "Usuário já existe!",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: false }
+      );
     }
   };
 
   return (
-    <View style={tw`flex-1 justify-center items-center`}>
+    <View className="flex-1 justify-center items-center dark:bg-slate-800">
       <View
-        style={[
-          tw`bg-white rounded-lg p-6 w-96`,
-          {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 8,
-          },
-        ]}
+        className="bg-white rounded-lg p-6 w-96 dark:bg-gray-600"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+          elevation: 8,
+        }}
       >
-        <Text style={tw`text-2xl font-bold mb-2 text-blue-600 text-center`}>
+        <Text className="text-2xl font-bold mb-2 text-blue-600 text-center dark:text-white">
           Faça seu registro!
         </Text>
-        <Text style={tw`text-sm font-normal mb-4 text-gray-600 text-center`}>
+        <Text className="text-sm font-normal mb-4 text-gray-600 text-center">
           Aqui você encontra uma variedade de filmes.
         </Text>
         <Controller
@@ -64,61 +72,66 @@ const RegisterForm = () => {
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
               placeholder="Digite seu nome"
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
+              placeholderTextColor={"gray"}
             />
           )}
         />
         {errors.name && (
-          <Text style={tw`text-red-500`}>{errors.name?.message}</Text>
+          <Text className="text-red-500">{errors.name?.message}</Text>
         )}
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
               placeholder="Digite seu email"
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
+              placeholderTextColor={"gray"}
             />
           )}
         />
         {errors.email && (
-          <Text style={tw`text-red-500`}>{errors.email?.message}</Text>
+          <Text className="text-red-500">{errors.email?.message}</Text>
         )}
         <Controller
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
               placeholder="Digite sua senha"
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
               secureTextEntry={true}
+              placeholderTextColor={"gray"}
             />
           )}
         />
         {errors.password && (
-          <Text style={tw`text-red-500`}>{errors.password?.message}</Text>
+          <Text className="text-red-500">{errors.password?.message}</Text>
         )}
-         <View style={tw`flex-row justify-between`}>
+        <View className="flex-row justify-between">
           <TouchableOpacity
-            style={[tw`bg-blue-500 rounded-md p-2`]}
+            className="bg-blue-500 rounded-md p-2"
             onPress={handleSubmit(onSubmit)}
           >
-            <Text style={tw`text-white`}>Registrar</Text>
+            <Text className="text-white">Registrar</Text>
           </TouchableOpacity>
-
-          <Link to="/login" component={TouchableOpacity} style={[tw`bg-gray-500 rounded-md p-2`]}>
-            <Text style={tw`text-white`}>Voltar</Text>
-          </Link>
+          <TouchableOpacity
+            className="bg-gray-500 rounded-md p-2"
+            onPress={() => navigation.navigate("Login")}
+          >
+            <Text className="text-white">Voltar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
