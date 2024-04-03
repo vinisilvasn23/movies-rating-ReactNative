@@ -1,21 +1,20 @@
 import React, { useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { Controller, useForm } from "react-hook-form";
 import {
-  View,
+  Alert,
   Text,
   TextInput,
   ToastAndroid,
   TouchableOpacity,
-  Alert,
+  View,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import tw from "tailwind-react-native-classnames";
-import { useForm, Controller } from "react-hook-form";
-import { loginUser } from "../../services/requests/requestsUser";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import ModalRecoveryPassword from "../modal/modalRecoveryPassword";
-import { Link } from 'react-router-native';
 import { useUser } from "../../context/userContext";
+import { loginUser } from "../../services/requests/requestsUser";
+import ModalRecoveryPassword from "../modal/modalRecoveryPassword";
 
 const loginSchema = yup.object({
   email: yup
@@ -28,6 +27,7 @@ const loginSchema = yup.object({
 const LoginForm = () => {
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const { setIsUserLoggedIn } = useUser();
+  const navigation = useNavigation();
 
   const {
     control,
@@ -41,9 +41,11 @@ const LoginForm = () => {
     try {
       const response = await loginUser(data);
       const token = response.access;
+      const userId = response.user_id;
       await AsyncStorage.setItem("userToken", token);
+      await AsyncStorage.setItem("userId", userId);
       ToastAndroid.show("Login realizado com sucesso!", ToastAndroid.SHORT);
-      setIsUserLoggedIn(true)
+      setIsUserLoggedIn(true);
     } catch (error) {
       Alert.alert(
         "Erro",
@@ -55,77 +57,77 @@ const LoginForm = () => {
   };
 
   return (
-    <View style={tw`flex-1 justify-center items-center`}>
+    <View className="flex-1 justify-center items-center dark:bg-slate-800">
       <View
-        style={[
-          tw`bg-white rounded-lg p-6 w-96`,
-          {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 8,
-          },
-        ]}
+        className="bg-white rounded-lg p-6 w-96 dark:bg-gray-600"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+          elevation: 8,
+        }}
       >
-        <Text style={tw`text-2xl font-bold mb-2 text-blue-600 text-center`}>
+        <Text className="text-2xl font-bold mb-2 text-blue-600 text-center dark:text-white">
           Seja bem-vindo!
         </Text>
-        <Text style={tw`text-sm font-normal mb-4 text-gray-600 text-center`}>
+        <Text className="text-sm font-normal mb-4 text-gray-600 text-center dark:text-white">
           Aqui você encontra uma variedade de filmes.
         </Text>
-        <View style={tw`bg-white rounded-lg p-6 max-w-md relative`}>
+        <View className="bg-white rounded-lg p-6 max-w-md relative dark:bg-gray-600">
           <Controller
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
                 placeholder="Digite seu email"
                 onChangeText={onChange}
                 onBlur={onBlur}
+                placeholderTextColor={"gray"}
                 value={value}
               />
             )}
           />
           {errors.email && (
-            <Text style={tw`text-red-500`}>{errors.email?.message}</Text>
+            <Text className="text-red-500">{errors.email?.message}</Text>
           )}
           <Controller
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                style={tw`w-full h-10 border border-gray-300 rounded-md mb-4 px-2`}
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
                 placeholder="Digite sua senha"
                 onChangeText={onChange}
                 onBlur={onBlur}
                 value={value}
+                placeholderTextColor={"gray"}
                 secureTextEntry={true}
               />
             )}
           />
           {errors.password && (
-            <Text style={tw`text-red-500`}>{errors.password?.message}</Text>
+            <Text className="text-red-500">{errors.password?.message}</Text>
           )}
           <TouchableOpacity
-            style={tw`bg-blue-500 rounded-md p-2 mb-4`}
+            className="bg-blue-500 rounded-md p-2 mb-4"
             onPress={handleSubmit(onSubmit)}
           >
-            <Text style={tw`text-white text-center`}>Login</Text>
+            <Text className="text-white text-center">Login</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setShowRecoveryModal(true)}>
-            <Text style={tw`text-sm text-blue-600 text-center`}>
+            <Text className="text-sm text-blue-600 text-center">
               Esqueceu a senha?
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={tw`flex-row mt-2 justify-center items-center`}>
-          <Text style={tw`text-sm`}>Ainda não tem uma conta? </Text>
-          <TouchableOpacity>
-          <Link to="/register">
-            <Text style={tw`text-sm text-blue-600`}>Criar nova conta</Text>
-            </Link>
+        <View className="flex-row mt-2 justify-center items-center dark:text-white">
+          <Text className="text-sm dark:text-white">
+            Ainda não tem uma conta?{" "}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text className="text-sm text-blue-600">Criar nova conta</Text>
           </TouchableOpacity>
         </View>
       </View>
