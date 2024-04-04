@@ -1,16 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { AntDesign } from "@expo/vector-icons";
 import {
+  Alert,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
 import * as yup from "yup";
-import { createUser } from "../../services/requests/requestsUser";
+import { useUser } from "../../context/userContext";
 
 const registerSchema = yup.object({
   name: yup.string().required("O nome é obrigatório."),
@@ -33,19 +34,18 @@ const RegisterForm = () => {
     resolver: yupResolver(registerSchema),
   });
   const navigation = useNavigation();
+  const { createUser } = useUser();
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     try {
       await createUser(data);
-      ToastAndroid.show("criado usuário!", ToastAndroid.SHORT);
+      Alert.alert("Sucesso", "Usuário criado com sucesso!", [
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ]);
       navigation.navigate("Login");
     } catch (error) {
-      Alert.alert(
-        "Erro",
-        "Usuário já existe!",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        { cancelable: false }
-      );
+      Alert.alert("Erro", "Usuário já existe!");
     }
   };
 
@@ -71,54 +71,81 @@ const RegisterForm = () => {
           control={control}
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
-              placeholder="Digite seu nome"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              placeholderTextColor={"gray"}
-            />
+            <>
+              <Text className="dark:text-white mb-2">Nome</Text>
+              <TextInput
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
+                placeholder="Digite seu nome"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                placeholderTextColor={"gray"}
+              />
+              {errors.name && (
+                <Text className="text-red-500">{errors.name?.message}</Text>
+              )}
+            </>
           )}
         />
-        {errors.name && (
-          <Text className="text-red-500">{errors.name?.message}</Text>
-        )}
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
-              placeholder="Digite seu email"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              placeholderTextColor={"gray"}
-            />
+            <>
+              <Text className="dark:text-white mb-2">Email</Text>
+              <TextInput
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
+                placeholder="Digite seu email"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                placeholderTextColor={"gray"}
+              />
+              {errors.email && (
+                <Text className="text-red-500">{errors.email?.message}</Text>
+              )}
+            </>
           )}
         />
-        {errors.email && (
-          <Text className="text-red-500">{errors.email?.message}</Text>
-        )}
         <Controller
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
-              placeholder="Digite sua senha"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              secureTextEntry={true}
-              placeholderTextColor={"gray"}
-            />
+            <>
+              <Text className="dark:text-white mb-2">Senha</Text>
+              <View style={{ flexDirection: "row" }}>
+                <TextInput
+                  className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
+                  placeholder="Digite sua senha"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  secureTextEntry={!showPassword}
+                  placeholderTextColor={"gray"}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 1,
+                    top: "20%",
+                    transform: [{ translateY: -10 }],
+                    padding: 8,
+                  }}
+                >
+                  <AntDesign
+                    name={showPassword ? "eye" : "eyeo"}
+                    size={20}
+                    color="#a8a8a8"
+                  />
+                </TouchableOpacity>
+              </View>
+              {errors.password && (
+                <Text className="text-red-500">{errors.password?.message}</Text>
+              )}
+            </>
           )}
         />
-        {errors.password && (
-          <Text className="text-red-500">{errors.password?.message}</Text>
-        )}
         <View className="flex-row justify-between">
           <TouchableOpacity
             className="bg-blue-500 rounded-md p-2"

@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
 import * as yup from "yup";
 import { useUser } from "../../context/userContext";
-import { loginUser } from "../../services/requests/requestsUser";
 import ModalRecoveryPassword from "../modal/modalRecoveryPassword";
+import { AntDesign } from "@expo/vector-icons";
 
 const loginSchema = yup.object({
   email: yup
@@ -26,8 +24,9 @@ const loginSchema = yup.object({
 
 const LoginForm = () => {
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
-  const { setIsUserLoggedIn } = useUser();
   const navigation = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useUser();
 
   const {
     control,
@@ -38,21 +37,9 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data) => {
-    try {
-      const response = await loginUser(data);
-      const token = response.access;
-      const userId = response.user_id;
-      await AsyncStorage.setItem("userToken", token);
-      await AsyncStorage.setItem("userId", userId);
-      ToastAndroid.show("Login realizado com sucesso!", ToastAndroid.SHORT);
-      setIsUserLoggedIn(true);
-    } catch (error) {
-      Alert.alert(
-        "Erro",
-        "Email ou senha inválido!",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        { cancelable: false }
-      );
+    const success = await login(data);
+    if (!success) {
+      Alert.alert("Erro", "Email ou senha inválido!");
     }
   };
 
@@ -79,39 +66,65 @@ const LoginForm = () => {
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
-                placeholder="Digite seu email"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholderTextColor={"gray"}
-                value={value}
-              />
+              <>
+                <Text className="dark:text-white mb-2">Nome</Text>
+                <TextInput
+                  className="w-full h-10 border border-gray-300 rounded-md px-2 dark:text-white"
+                  placeholder="Digite seu email"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholderTextColor={"gray"}
+                  value={value}
+                />
+                {errors.email && (
+                  <Text className="text-red-500">{errors.email?.message}</Text>
+                )}
+              </>
             )}
           />
-          {errors.email && (
-            <Text className="text-red-500">{errors.email?.message}</Text>
-          )}
           <Controller
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
-                placeholder="Digite sua senha"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                placeholderTextColor={"gray"}
-                secureTextEntry={true}
-              />
+              <>
+                <Text className="dark:text-white mb-2 mt-4">Senha</Text>
+                <View style={{ flexDirection: "row" }}>
+                  <TextInput
+                    className="w-full h-10 border border-gray-300 rounded-md px-2 dark:text-white"
+                    placeholder="Digite sua senha"
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                    placeholderTextColor={"gray"}
+                    secureTextEntry={!showPassword}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: "absolute",
+                      right: 1,
+                      top: "20%",
+                      transform: [{ translateY: -10 }],
+                      padding: 8,
+                    }}
+                  >
+                    <AntDesign
+                      name={showPassword ? "eye" : "eyeo"}
+                      size={20}
+                      color="#a8a8a8"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.password && (
+                  <Text className="text-red-500">
+                    {errors.password?.message}
+                  </Text>
+                )}
+              </>
             )}
           />
-          {errors.password && (
-            <Text className="text-red-500">{errors.password?.message}</Text>
-          )}
           <TouchableOpacity
-            className="bg-blue-500 rounded-md p-2 mb-4"
+            className="bg-blue-500 rounded-md p-2 mb-4 mt-4"
             onPress={handleSubmit(onSubmit)}
           >
             <Text className="text-white text-center">Login</Text>
