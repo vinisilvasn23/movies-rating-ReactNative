@@ -1,6 +1,6 @@
 import { api } from "../api";
 
-const handleRequest = async (method, url, token) => {
+export const handleRequest = async (method, url, token, dataOrParams) => {
   try {
     const config = {
       headers: {
@@ -8,8 +8,14 @@ const handleRequest = async (method, url, token) => {
       },
     };
 
-    const response = await api[method](url, config);
-
+    let response;
+    if (method.toLowerCase() === 'get' && typeof dataOrParams === 'object') {
+      let queryString = Object.keys(dataOrParams).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(dataOrParams[key])}`).join('&');
+      url += `?${queryString}`;
+      response = await api[method](url, config);
+    } else {
+      response = await api[method](url, dataOrParams, config);
+    }
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -24,10 +30,14 @@ const handleRequest = async (method, url, token) => {
   }
 };
 
-export const listRatings = async (token, data) => {
-  return handleRequest("post", "/ratings/", token, data);
+export const postRatings = async (token, data) => {
+  return handleRequest("post", "/api/ratings/", token, data);
+};
+
+export const listRatings = async (token, params) => {
+  return handleRequest("get", "/api/ratings/", token, params);
 };
 
 export const getRatingDetail = async (token, ratingId) => {
-  return handleRequest("get", `/ratings/${ratingId}/`, token);
+  return handleRequest("get", `/api/ratings/${ratingId}/`, token);
 };

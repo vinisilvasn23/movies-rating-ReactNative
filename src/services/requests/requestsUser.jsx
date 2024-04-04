@@ -27,7 +27,7 @@ const handleRequest = async (method, url, token, data) => {
   }
 };
 
-export const createUser = async (userData) => {
+export const createUserRequest = async (userData) => {
   return handleRequest("post", "/api/users/", undefined, userData);
 };
 
