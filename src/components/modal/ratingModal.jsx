@@ -13,21 +13,20 @@ const schema = yup.object().shape({
   description: yup.string().required("Descrição é obrigatória"),
 });
 
-const RatingModal = ({ visible, onClose, onSubmit, movieId }) => {
+const RatingModal = ({ visible, onClose, onSubmit, movie_id }) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const [ratingValue, setRatingValue] = useState("");
-  const [descriptionValue, setDescriptionValue] = useState("");
-
-  const handleFormSubmit = () => {
-    onSubmit({ movieId, rating: ratingValue, description: descriptionValue });
+  const handleFormSubmit = (formData) => {
+    onSubmit({ movie_id, ...formData });
     onClose();
+    reset();
   };
 
   return (
@@ -46,8 +45,10 @@ const RatingModal = ({ visible, onClose, onSubmit, movieId }) => {
           alignItems: "center",
         }}
       >
-        <View className="bg-white p-4 rounded-md w-80">
-          <Text className="text-lg font-bold mb-2">Comentar e Avaliar</Text>
+        <View className="bg-white p-4 rounded-md w-80 dark:bg-gray-700">
+          <Text className="text-lg font-bold mb-2 dark:text-white">
+            Comentar e Avaliar
+          </Text>
           <Controller
             control={control}
             name="rating"
@@ -72,14 +73,15 @@ const RatingModal = ({ visible, onClose, onSubmit, movieId }) => {
             name="description"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
+                className="w-full border border-gray-300 rounded-md mb-4 px-2 py-2 dark:text-white text-left"
                 placeholder="Descrição"
                 multiline={true}
-                numberOfLines={4}
+                numberOfLines={5}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 value={value}
                 placeholderTextColor={"gray"}
+                textAlignVertical="top"
               />
             )}
           />
