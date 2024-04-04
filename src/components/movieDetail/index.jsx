@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { statusBarHeight } from "../../config";
 import { useMovie } from "../../context/movieContext";
-import RatingModal from "../modal/ratingModal";
-import { listRatings } from "../../services/requests/requestRating";
 import { useUser } from "../../context/userContext";
+import { listRatings, postRatings } from "../../services/requests/requestRating";
+import RatingModal from "../modal/ratingModal";
 
 const MovieDetail = ({ route }) => {
   const { movie, genres } = route.params;
@@ -14,7 +14,8 @@ const MovieDetail = ({ route }) => {
   const { translationMovie } = useMovie();
   const [translationData, setTranslationData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const { userToken } = useUser();
+  const { tokenUser } = useUser();
+  const [ratings, setRatings] = useState([]);
 
   useEffect(() => {
     const fetchTranslation = async () => {
@@ -34,7 +35,17 @@ const MovieDetail = ({ route }) => {
     };
 
     fetchTranslation();
-  }, [movie, translationMovie]);
+    fetchRatings();
+  }, [movie, translationMovie, submitRating]);
+
+  const fetchRatings = async () => {
+    try {
+      const ratingsResponse = await listRatings(tokenUser, { movie_id: movie.id });
+      setRatings(ratingsResponse);
+    } catch (error) {
+      console.error("Erro ao buscar ratings:", error);
+    }
+  };
 
   const mapGenreIdsToNames = (genreIds, genres) => {
     return genreIds.map((genreId) => {
@@ -54,7 +65,8 @@ const MovieDetail = ({ route }) => {
   };
 
   const submitRating = async (ratingData) => {
-    await listRatings(userToken, ratingData);
+    await postRatings(tokenUser, ratingData);
+    fetchRatings();
     closeModal();
   };
 
@@ -92,7 +104,7 @@ const MovieDetail = ({ route }) => {
             Detalhes adicionais:
           </Text>
           <Text className="mb-2 dark:text-white">
-            Média de votos: {movie.vote_average}
+            Média de votos: {movie.vote_average.toFixed(1)}
           </Text>
           <Text className="mb-2 dark:text-white">
             Quantidade de votos: {movie.vote_count}
@@ -103,18 +115,29 @@ const MovieDetail = ({ route }) => {
         </View>
         <TouchableOpacity
           onPress={handleRatingModal}
-          className="bg-blue-500 py-2 px-4 mt-4 rounded-md"
+          className="bg-blue-500 rounded-md py-2 px-4 mt-4 items-center justify-center"
         >
           <Text className="text-white font-bold dark:text-white">
             Comentar e Avaliar
           </Text>
         </TouchableOpacity>
+        <View>
+        <Text className="mt-6 text-lg font-bold mb-2 dark:text-white">Avaliações:</Text>
+        {ratings.map((rating, index) => (
+          <View key={index} className="bg-gray-300 p-4 rounded-lg mb-4">
+            <Text className="font-bold mb-1">{rating.user.name}</Text>
+            <Text className="mb-1">Comentário: {rating.description}</Text>
+            <Text>Nota: {rating.rating}</Text>
+          </View>
+        ))}
+      </View>
       </ScrollView>
+
       <RatingModal
         visible={modalVisible}
         onClose={closeModal}
         onSubmit={submitRating}
-        movieId={movie.id}
+        movie_id={movie.id}
       />
     </View>
   );
