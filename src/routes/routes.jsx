@@ -11,6 +11,7 @@ import RegisterForm from "../components/register";
 import SearchResults from "../components/searchResults";
 import { useUser } from "../context/userContext";
 import Dashboard from "../pages/dashboard";
+import { useColorScheme } from "nativewind";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -70,11 +71,20 @@ const Routes = () => {
 };
 
 const MainScreen = () => {
-  const { isUserLoggedIn } = useUser();
+  const { isUserLoggedIn, user } = useUser();
+  const colorScheme = useColorScheme();
+
   return (
     <>
-      {isUserLoggedIn ? (
-        <Tab.Navigator>
+      {isUserLoggedIn && user ? (
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarStyle: {
+              backgroundColor:
+                colorScheme.colorScheme === "dark" ? "#333" : "#fff",
+            },
+          })}
+        >
           <Tab.Screen
             name="Dashboard"
             component={Dashboard}
