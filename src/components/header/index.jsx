@@ -1,9 +1,13 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { Text, View } from "react-native";
 import { useUser } from "../../context/userContext";
+import { Image } from "expo-image";
+import { Asset } from "expo-asset";
 
 const Header = () => {
   const { user } = useUser();
+  const iconAsset = Asset.fromModule(require("../../../assets/icon.png"));
+  const uri = iconAsset.uri
 
   const initials = user
     ? user.name
@@ -24,8 +28,8 @@ const Header = () => {
     >
       <View className="flex-row justify-between w-full items-center">
         <Image
-          source={require("../../../assets/icon.png")}
-          className="w-12 h-12"
+          source={{ uri }}
+          style={{ width: 50, height: 50 }}
         />
         <View className="rounded-full bg-blue-500 w-10 h-10 justify-center items-center">
           <Text className="text-white text-lg font-bold">{initials}</Text>

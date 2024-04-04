@@ -1,15 +1,20 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { View } from "react-native";
+import { Image } from "expo-image";
 import Spinner from "react-native-loading-spinner-overlay";
+import { Asset } from "expo-asset";
 
 const Loading = () => {
+  const logoAsset = Asset.fromModule(require("../../../assets/logo.png"));
+  const uri = logoAsset.uri;
+
   return (
-    <View className="flex-1 justify-center items-center">
+    <View className="flex-1 justify-center items-center dark:bg-slate-800">
       <View className="flex items-center mb-8">
         <View className="flex items-center">
           <Image
-            source={require("../../../assets/logo.png")}
-            style={{ width: 120, height: 120 }}
+            source={{ uri }}
+            style={{ width: 115, height: 115 }}
           />
         </View>
       </View>
