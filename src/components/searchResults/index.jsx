@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { findMovies } from "../../services/requests/requestMovies";
+import { findMovies, findSeries } from "../../services/requests/requestMovies";
 import { Ionicons } from "@expo/vector-icons";
 import { statusBarHeight } from "../../config";
 import { useMovie } from "../../context/movieContext";
@@ -9,28 +16,57 @@ import { useMovie } from "../../context/movieContext";
 const SearchResults = () => {
   const [movies, setMovies] = useState([]);
   const route = useRoute();
-  const { query, token } = route.params;
+  const { query, token, type } = route.params;
   const navigation = useNavigation();
   const { genres } = useMovie();
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const data = await findMovies(token, { query: query });
-        setMovies(data.results);
-      } catch (error) {
-        console.error("Erro ao buscar filmes:", error);
+    loadMovies();
+  }, [query, type]);
+
+  const fetchResults = async () => {
+    try {
+      setIsLoading(true);
+      let data = [];
+      if (type === "movies") {
+        data = await findMovies(token, { query: query, page: page });
+      } else if (type === "series") {
+        data = await findSeries(token, { query: query, page: page });
       }
-    };
-    fetchMovies();
-  }, [query]);
+      return data.results;
+    } catch (error) {
+      console.error("Erro ao buscar filmes:", error);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadMovies = async () => {
+    const newMovies = await fetchResults();
+    setMovies((prevMovies) => [...prevMovies, ...newMovies]);
+    setPage((prevPage) => prevPage + 1);
+  };
 
   const goToMovieDetail = (movie) => {
     navigation.navigate("MovieDetail", { movie: movie, genres: genres });
   };
 
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    ) {
+      loadMovies();
+    }
+  };
+
   return (
-    <ScrollView className="dark:bg-slate-800">
+    <ScrollView className="dark:bg-slate-800" onScroll={handleScroll}>
       <View style={{ paddingTop: statusBarHeight }}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -47,9 +83,9 @@ const SearchResults = () => {
           Resultados da pesquisa para "{query}"
         </Text>
         <View className="flex-row flex-wrap justify-center">
-          {movies.map((movie) => (
+          {movies.map((movie, index) => (
             <TouchableOpacity
-              key={movie.id}
+              key={index}
               className="mb-4 mr-4"
               onPress={() => goToMovieDetail(movie)}
             >
@@ -58,19 +94,20 @@ const SearchResults = () => {
                   source={{
                     uri: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`,
                   }}
-                  className="w-24 h-32 mb-2"
+                  style={{ width: 120, height: 180, borderRadius: 8 }}
                 />
                 <Text
                   className="text-sm dark:text-white"
                   style={{ maxWidth: 80 }}
                   numberOfLines={2}
                 >
-                  {movie.title}
+                  {movie.title ? movie.title : movie.name}
                 </Text>
               </View>
             </TouchableOpacity>
           ))}
         </View>
+        {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
       </View>
     </ScrollView>
   );
