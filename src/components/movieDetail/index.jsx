@@ -5,7 +5,10 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { statusBarHeight } from "../../config";
 import { useMovie } from "../../context/movieContext";
 import { useUser } from "../../context/userContext";
-import { listRatings, postRatings } from "../../services/requests/requestRating";
+import {
+  listRatings,
+  postRatings,
+} from "../../services/requests/requestRating";
 import RatingModal from "../modal/ratingModal";
 
 const MovieDetail = ({ route }) => {
@@ -40,7 +43,9 @@ const MovieDetail = ({ route }) => {
 
   const fetchRatings = async () => {
     try {
-      const ratingsResponse = await listRatings(tokenUser, { movie_id: movie.id });
+      const ratingsResponse = await listRatings(tokenUser, {
+        movie_id: movie.id,
+      });
       setRatings(ratingsResponse);
     } catch (error) {
       console.error("Erro ao buscar ratings:", error);
@@ -88,13 +93,18 @@ const MovieDetail = ({ route }) => {
           source={{
             uri: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`,
           }}
-          className="w-full h-96 mb-4"
+          style={{
+            width: "100%",
+            height: 500,
+            marginBottom: 16,
+            borderRadius: 8,
+          }}
         />
         <Text className="font-bold text-xl mb-2 dark:text-white">
-          {movie.title}
+          {movie.title ? movie.title : movie.name}
         </Text>
         <Text className="text-sm mb-2 dark:text-white">
-          {movie.release_date}
+          {movie.release_date ? movie.release_date : movie.first_air_date}
         </Text>
         <Text className="mb-4 dark:text-white">
           {translationData ? translationData : movie.overview}
@@ -122,15 +132,19 @@ const MovieDetail = ({ route }) => {
           </Text>
         </TouchableOpacity>
         <View>
-        <Text className="mt-6 text-lg font-bold mb-2 dark:text-white">Avaliações:</Text>
-        {ratings.map((rating, index) => (
-          <View key={index} className="bg-gray-300 p-4 rounded-lg mb-4">
-            <Text className="font-bold mb-1">{rating.user.name}</Text>
-            <Text className="mb-1">Comentário: {rating.description}</Text>
-            <Text>Nota: {rating.rating}</Text>
-          </View>
-        ))}
-      </View>
+          {ratings.map((rating, index) => (
+            <>
+              <Text className="mt-6 text-lg font-bold mb-2 dark:text-white">
+                Avaliações:
+              </Text>
+              <View key={index} className="bg-gray-300 p-4 rounded-lg mb-4">
+                <Text className="font-bold mb-1">{rating.user.name}</Text>
+                <Text className="mb-1">Comentário: {rating.description}</Text>
+                <Text>Nota: {rating.rating}</Text>
+              </View>
+            </>
+          ))}
+        </View>
       </ScrollView>
 
       <RatingModal
