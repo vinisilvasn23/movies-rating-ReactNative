@@ -1,18 +1,12 @@
-import React, { useState } from "react";
+import { AntDesign } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Alert,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as yup from "yup";
 import { useUser } from "../../context/userContext";
 import ModalRecoveryPassword from "../modal/modalRecoveryPassword";
-import { AntDesign } from "@expo/vector-icons";
 
 const loginSchema = yup.object({
   email: yup
@@ -130,7 +124,7 @@ const LoginForm = () => {
             <Text className="text-white text-center">Login</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setShowRecoveryModal(true)}>
-            <Text className="text-sm text-blue-600 text-center">
+            <Text className="text-sm text-blue-400 text-center">
               Esqueceu a senha?
             </Text>
           </TouchableOpacity>
@@ -140,7 +134,7 @@ const LoginForm = () => {
             Ainda não tem uma conta?{" "}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text className="text-sm text-blue-600">Criar nova conta</Text>
+            <Text className="text-sm text-blue-400">Criar nova conta</Text>
           </TouchableOpacity>
         </View>
       </View>
