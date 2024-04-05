@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createUserRequest, deleteUser, getUserById, loginUser } from "../services/requests/requestsUser";
+import {
+  createUserRequest,
+  deleteUser,
+  getUserById,
+  loginUser,
+} from "../services/requests/requestsUser";
 import { useColorScheme } from "nativewind";
 import { ToastAndroid } from "react-native";
 
@@ -39,7 +44,10 @@ export const UserProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        ToastAndroid.show("Token expirado. Redirecionando para a tela de login...", ToastAndroid.SHORT);
+        ToastAndroid.show(
+          "Token expirado. Redirecionando para a tela de login...",
+          ToastAndroid.SHORT
+        );
       } finally {
         setIsLoading(false);
       }
@@ -100,7 +108,7 @@ export const UserProvider = ({ children }) => {
       await deleteUser(tokenUser, user.id);
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("userId");
-      setIsUserLoggedIn(false)
+      setIsUserLoggedIn(false);
     } catch (error) {
       console.error("Erro ao excluir a conta:", error);
     }
@@ -116,7 +124,7 @@ export const UserProvider = ({ children }) => {
         login,
         logout,
         createUser,
-        confirmDeleteAccount
+        confirmDeleteAccount,
       }}
     >
       {children}
