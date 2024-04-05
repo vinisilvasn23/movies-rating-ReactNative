@@ -12,6 +12,7 @@ import SearchResults from "../components/searchResults";
 import { useUser } from "../context/userContext";
 import Dashboard from "../pages/dashboard";
 import { useColorScheme } from "nativewind";
+import MoreMovies from "../components/moreMovies";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +49,11 @@ const Routes = () => {
             <Stack.Screen
               name="SearchResults"
               component={SearchResults}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MoreMovies"
+              component={MoreMovies}
               options={{ headerShown: false }}
             />
           </>
