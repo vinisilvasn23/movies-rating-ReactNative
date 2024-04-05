@@ -21,7 +21,7 @@ const Loading = () => {
       <Spinner
         visible={true}
         textContent={"Carregando..."}
-        textClassName={"text-lg text-gray-700"}
+        textClassName={"text-lg text-gray-700 dark:text-white"}
         overlayColor={"rgba(0, 0, 0, 0.5)"}
       />
     </View>
