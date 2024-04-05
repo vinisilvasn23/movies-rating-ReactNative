@@ -8,11 +8,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../../context/userContext";
 import { statusBarHeight } from "../../config";
+import { Picker } from "@react-native-picker/picker";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { popularMovies, bestAssessmentMovies, movieTheaterMovies, isLoading } =
-    useMovie();
+  const [searchType, setSearchType] = useState("movies");
+  const {
+    popularMovies,
+    bestAssessmentMovies,
+    movieTheaterMovies,
+    popularSeries,
+    topSeries,
+    isLoading,
+  } = useMovie();
   const { userToken } = useUser();
 
   const navigation = useNavigation();
@@ -21,6 +29,7 @@ const Dashboard = () => {
       navigation.navigate("SearchResults", {
         query: searchQuery,
         token: userToken,
+        type: searchType,
       });
     }
   };
@@ -37,21 +46,55 @@ const Dashboard = () => {
       <Header />
       <View className="relative flex-row items-center m-4">
         <TextInput
-          className="border border-gray-500 rounded-md p-2 pl-10 flex-1 dark:text-white"
-          placeholder="Buscar filmes..."
-          placeholderTextColor={'gray'}
+          className="border border-gray-500 rounded-md p-2 pl-4 flex-1 dark:text-white"
+          placeholder="Buscar filmes e séries..."
+          placeholderTextColor={"gray"}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <TouchableOpacity onPress={handleSearch} className={`p-2`}>
-          <Ionicons name="search" size={24} color="gray" />
+        <Picker
+          selectedValue={searchType}
+          style={{
+            width: 150,
+            borderColor: "gray",
+            height: 50,
+            color: "gray",
+          }}
+          onValueChange={(itemValue, itemIndex) => setSearchType(itemValue)}
+        >
+          <Picker.Item label="Filmes" value="movies" />
+          <Picker.Item label="Séries" value="series" />
+        </Picker>
+        <TouchableOpacity
+          onPress={handleSearch}
+          className="p-2 bg-gray-800 rounded-lg dark:bg-gray-400"
+        >
+          <Ionicons name="search" size={24} color="white" />
         </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mb-4 p-4">
-          <MovieList title="Filmes Populares" data={popularMovies} />
-          <MovieList title="Melhores Avaliações" data={bestAssessmentMovies} />
-          <MovieList title="Filmes em Cartaz" data={movieTheaterMovies} />
+          <MovieList
+            title="Filmes Populares"
+            data={popularMovies}
+            name="popularMovies"
+          />
+          <MovieList
+            title="Melhores Avaliações"
+            data={bestAssessmentMovies}
+            name="bestAssessmentMovies"
+          />
+          <MovieList
+            title="Filmes em Cartaz"
+            data={movieTheaterMovies}
+            name="movieTheaterMovies"
+          />
+          <MovieList
+            title="Series Populares"
+            data={popularSeries}
+            name="popularSeries"
+          />
+          <MovieList title="Top Series" data={topSeries} name="topSeries" />
         </View>
       </ScrollView>
     </View>
