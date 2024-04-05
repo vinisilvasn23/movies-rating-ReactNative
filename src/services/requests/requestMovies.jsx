@@ -53,6 +53,10 @@ export const findMovies = async (token, params) => {
   return handleRequest("get", "api/movies/busca/", token, params);
 };
 
+export const findSeries = async (token, params) => {
+  return handleRequest("get", "api/series/busca/", token, params);
+};
+
 export const detailMovie = async (token, movieId, params) => {
   return handleRequest("get", `api/movies/${movieId}/`, token, params);
 };
@@ -81,4 +85,12 @@ export const translationMovieData = async (token, movieId) => {
     token,
     undefined
   );
+};
+
+export const listPopularSeries = async (token, params) => {
+  return handleRequest("get", "api/series/popular/", token, params);
+};
+
+export const listTopSeries = async (token, params) => {
+  return handleRequest("get", "api/series/top-series/", token, params);
 };
