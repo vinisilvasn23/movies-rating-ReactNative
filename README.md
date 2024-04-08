@@ -2,7 +2,7 @@
 
 O Movies Rating é um aplicativo desenvolvido com Expo e React Native, projetado para entusiastas de filmes e séries. Ele oferece uma plataforma interativa onde os usuários podem explorar uma vasta lista de filmes e séries, ler descrições detalhadas, deixar avaliações pessoais e compartilhar comentários com outros membros da comunidade.
 
-## Princiopais recursos.
+## Principais recursos.
 
 1. Exploração de Filmes e Séries: Navegue por uma ampla seleção de filmes e séries, incluindo os mais recentes lançamentos e clássicos atemporais.
 
