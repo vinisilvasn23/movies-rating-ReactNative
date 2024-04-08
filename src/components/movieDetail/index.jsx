@@ -6,8 +6,8 @@ import { statusBarHeight } from "../../config";
 import { useMovie } from "../../context/movieContext";
 import { useUser } from "../../context/userContext";
 import {
-  listRatings,
-  postRatings,
+    listRatings,
+    postRatings,
 } from "../../services/requests/requestRating";
 import RatingModal from "../modal/ratingModal";
 
@@ -77,7 +77,7 @@ const MovieDetail = ({ route }) => {
 
   return (
     <View
-      className="flex-1 dark:bg-slate-800 p-5"
+      className="flex-1 dark:bg-slate-900 p-5"
       style={{ paddingTop: statusBarHeight }}
     >
       <TouchableOpacity
@@ -132,12 +132,12 @@ const MovieDetail = ({ route }) => {
           </Text>
         </TouchableOpacity>
         <View>
-          {ratings.map((rating, index) => (
+          {ratings.map((rating) => (
             <>
               <Text className="mt-6 text-lg font-bold mb-2 dark:text-white">
                 Avaliações:
               </Text>
-              <View key={index} className="bg-gray-300 p-4 rounded-lg mb-4">
+              <View key={rating.id} className="bg-gray-300 p-4 rounded-lg mb-4">
                 <Text className="font-bold mb-1">{rating.user.name}</Text>
                 <Text className="mb-1">Comentário: {rating.description}</Text>
                 <Text>Nota: {rating.rating}</Text>

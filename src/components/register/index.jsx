@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AntDesign } from "@expo/vector-icons";
 import {
-  Alert,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import * as yup from "yup";
 import { useUser } from "../../context/userContext";
@@ -50,7 +50,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <View className="flex-1 justify-center items-center dark:bg-slate-800">
+    <View className="flex-1 justify-center items-center dark:bg-slate-900">
       <View
         className="bg-white rounded-lg p-6 w-96 dark:bg-gray-600"
         style={{

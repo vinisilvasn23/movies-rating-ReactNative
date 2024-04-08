@@ -77,7 +77,7 @@ const ModalRecoveryPassword = ({ showRecoveryModal, setShowRecoveryModal }) => {
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2"
+                className="w-full h-10 border border-gray-300 rounded-md mb-4 px-2 dark:text-white"
                 placeholder="Digite seu email"
                 onChangeText={(text) => {
                   setForgotEmail(text);
