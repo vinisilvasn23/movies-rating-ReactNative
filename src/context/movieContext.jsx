@@ -116,7 +116,7 @@ export const MovieProvider = ({ children }) => {
 
   const fetchPopularSeries = async (params) => {
     try {
-      const response = await listPopularMovies(userToken, params);
+      const response = await listPopularSeries(userToken, params);
       return response.results;
     } catch (error) {
       console.error("Erro ao buscar filmes populares:", error);
@@ -125,7 +125,7 @@ export const MovieProvider = ({ children }) => {
 
   const fetchTopSeries = async (params) => {
     try {
-      const response = await listBestAssessmentMovies(userToken, params);
+      const response = await listTopSeries(userToken, params);
       return response.results;
     } catch (error) {
       console.error("Erro ao buscar melhores filmes avaliados:", error);
