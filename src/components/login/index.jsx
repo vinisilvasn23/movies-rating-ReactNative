@@ -7,6 +7,7 @@ import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as yup from "yup";
 import { useUser } from "../../context/userContext";
 import ModalRecoveryPassword from "../modal/modalRecoveryPassword";
+import Loading from "../loading";
 
 const loginSchema = yup.object({
   email: yup
@@ -20,7 +21,7 @@ const LoginForm = () => {
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useUser();
+  const { login, isLoading } = useUser();
 
   const {
     control,
@@ -37,8 +38,12 @@ const LoginForm = () => {
     }
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
-    <View className="flex-1 justify-center items-center dark:bg-slate-800">
+    <View className="flex-1 justify-center items-center dark:bg-slate-900">
       <View
         className="bg-white rounded-lg p-6 w-96 dark:bg-gray-600"
         style={{
