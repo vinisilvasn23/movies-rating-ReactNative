@@ -27,7 +27,9 @@ export const UserProvider = ({ children }) => {
       setIsLoading(true);
       try {
         const theme = await AsyncStorage.getItem("colorTheme");
-        colorScheme.setColorScheme(theme);
+        if (theme) {
+          colorScheme.setColorScheme(theme);
+        }
 
         const token = await AsyncStorage.getItem("userToken");
         const userId = await AsyncStorage.getItem("userId");
