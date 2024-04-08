@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image,
-} from "react-native";
-import { useMovie } from "../../context/movieContext";
-import { statusBarHeight } from "../../config";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { statusBarHeight } from "../../config";
+import { useMovie } from "../../context/movieContext";
 
 const MoreMovies = ({ route }) => {
   const { name } = route.params;
@@ -30,7 +30,7 @@ const MoreMovies = ({ route }) => {
   useEffect(() => {
     loadMovies();
   }, []);
-
+console.log(name)
   const fetchMoviesByType = async (page) => {
     switch (name) {
       case "popularMovies":
@@ -52,7 +52,12 @@ const MoreMovies = ({ route }) => {
     setIsLoading(true);
     try {
       const newMovies = await fetchMoviesByType(page);
-      setMovies((prevMovies) => [...prevMovies, ...newMovies]);
+      setMovies((prevMovies) => {
+        const uniqueNewMovies = newMovies.filter(
+          (movie) => !prevMovies.some((prevMovie) => prevMovie.id === movie.id)
+        );
+        return [...prevMovies, ...uniqueNewMovies];
+      });
       setPage((prevPage) => prevPage + 1);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -77,12 +82,15 @@ const MoreMovies = ({ route }) => {
   };
 
   return (
-    <View className="dark:bg-slate-800">
+    <View
+      style={{ flex: 1, paddingTop: statusBarHeight }}
+      className="dark:bg-slate-900"
+    >
       <ScrollView onScroll={handleScroll}>
-        <View style={{ paddingTop: statusBarHeight }}>
+        <View>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            className="absolute top-12 left-4 z-10"
+            className="absolute top-4 left-4 z-10"
             style={{ zIndex: 1 }}
           >
             <View className="bg-black p-2 rounded-full">
@@ -90,7 +98,7 @@ const MoreMovies = ({ route }) => {
             </View>
           </TouchableOpacity>
         </View>
-        <View className="p-4 pt-20">
+        <View className="p-4">
           <Text className="text-xl font-bold mb-4 text-center dark:text-white">
             Resultados:
           </Text>
@@ -113,7 +121,7 @@ const MoreMovies = ({ route }) => {
                     style={{ maxWidth: 80 }}
                     numberOfLines={2}
                   >
-                    {movie.title}
+                    {movie.title ? movie.title : movie.name}
                   </Text>
                 </View>
               </TouchableOpacity>
