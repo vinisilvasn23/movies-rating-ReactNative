@@ -22,7 +22,6 @@ const Dashboard = () => {
     isLoading,
   } = useMovie();
   const { userToken } = useUser();
-
   const navigation = useNavigation();
   const handleSearch = () => {
     if (searchQuery.trim() !== "") {
@@ -40,39 +39,39 @@ const Dashboard = () => {
 
   return (
     <View
-      className="dark:bg-slate-800 flex-1"
-      style={{ zIndex: 1, paddingTop: statusBarHeight }}
+      style={{ paddingTop: statusBarHeight }}
+      className="dark:bg-slate-900 flex-1 pt-4"
     >
       <Header />
-      <View className="relative flex-row items-center m-4">
-        <TextInput
-          className="border border-gray-500 rounded-md p-2 pl-4 flex-1 dark:text-white"
-          placeholder="Buscar filmes e séries..."
-          placeholderTextColor={"gray"}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        <Picker
-          selectedValue={searchType}
-          style={{
-            width: 150,
-            borderColor: "gray",
-            height: 50,
-            color: "gray",
-          }}
-          onValueChange={(itemValue, itemIndex) => setSearchType(itemValue)}
-        >
-          <Picker.Item label="Filmes" value="movies" />
-          <Picker.Item label="Séries" value="series" />
-        </Picker>
-        <TouchableOpacity
-          onPress={handleSearch}
-          className="p-2 bg-gray-800 rounded-lg dark:bg-gray-400"
-        >
-          <Ionicons name="search" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="relative flex-row items-center m-4">
+          <TextInput
+            className="border border-gray-500 rounded-md p-2 pl-4 flex-1 dark:text-white"
+            placeholder="Buscar filmes e séries..."
+            placeholderTextColor={"gray"}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <Picker
+            selectedValue={searchType}
+            style={{
+              width: 150,
+              borderColor: "gray",
+              height: 50,
+              color: "gray",
+            }}
+            onValueChange={(itemValue, itemIndex) => setSearchType(itemValue)}
+          >
+            <Picker.Item label="Filmes" value="movies" />
+            <Picker.Item label="Séries" value="series" />
+          </Picker>
+          <TouchableOpacity
+            onPress={handleSearch}
+            className="p-2 bg-gray-800 rounded-lg dark:bg-gray-400"
+          >
+            <Ionicons name="search" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
         <View className="mb-4 p-4">
           <MovieList
             title="Filmes Populares"
